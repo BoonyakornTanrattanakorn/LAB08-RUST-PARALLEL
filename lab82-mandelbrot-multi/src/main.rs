@@ -5,9 +5,9 @@ use rayon::prelude::*;
 use std::time::Instant;
 
 fn main() {
-    let image_width: u32 = 2*1920;
-    let image_height: u32 = 2*1080;
-    let max_iterations: u32 = 100;
+    let image_width: u32 = 1920;
+    let image_height: u32 = 1080;
+    let max_iterations: u32 = 1000;
 
     let mut imgbuf = ImageBuffer::new(image_width, image_height);
 
