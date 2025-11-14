@@ -11,9 +11,9 @@ const PREVIEW_ITERATIONS: u32 = 300;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Pod, Zeroable)]
-struct ViewParams {
-    center: [f32; 2],
-    range: [f32; 2],
+pub struct ViewParams {
+    pub center: [f32; 2],
+    pub range: [f32; 2],
     screen_dims: [u32; 2],
 }
 
@@ -24,11 +24,12 @@ pub struct State {
     config: wgpu::SurfaceConfiguration,
     pub size: winit::dpi::PhysicalSize<u32>,
     pub window: Window,
+    pub cursor_position:Option<winit::dpi::PhysicalPosition<f64>>,
 
     render_pipeline: wgpu::RenderPipeline,
     compute_pipeline: wgpu::ComputePipeline,
 
-    view_params: ViewParams,
+    pub view_params: ViewParams,
     view_params_buffer: wgpu::Buffer,
     high_res_texture: wgpu::Texture,
     low_res_texture: wgpu::Texture,
@@ -141,7 +142,7 @@ impl State {
 
         let high_res_texture_view = high_res_texture.create_view(&wgpu::TextureViewDescriptor::default());
 
-        // TODO: Create the compute bind group
+        // Create the compute bind group
         // This connects the shader's @group(0) bindings to actual GPU resources
         // You need to bind:
         //   - binding 0: view_params_buffer (uniform buffer with view parameters)
@@ -283,6 +284,7 @@ impl State {
             low_res_render_bind_group,
             compute_bind_group,
             show_low_res: false,
+            cursor_position: None,
         };
 
         s.trigger_render(false);
@@ -364,7 +366,7 @@ impl State {
         }
     }
 
-    fn trigger_render(&mut self, with_preview: bool) {
+    pub fn trigger_render(&mut self, with_preview: bool) {
         if with_preview {
             let preview_params = ViewParams {
                 screen_dims: [LOW_RES_WIDTH, LOW_RES_HEIGHT],
